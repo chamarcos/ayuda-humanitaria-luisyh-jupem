@@ -11,6 +11,8 @@ import Fiscal from "./components/Fiscal";
 import CFDI from "./components/CFDI";
 import Tramites from "./components/Tramites";
 import Contact from "./components/Contact";
+import IMSSemanas from "./components/IMSSemanas";
+import EmailRecovery from "./components/EmailRecovery";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -45,6 +47,8 @@ function App() {
             <Route path="/fiscal" element={<Fiscal />} />
             <Route path="/cfdi" element={<CFDI />} />
             <Route path="/tramites" element={<Tramites />} />
+            <Route path="/imss-semanas" element={<IMSSemanas />} />
+            <Route path="/email-recovery" element={<EmailRecovery />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </main>
