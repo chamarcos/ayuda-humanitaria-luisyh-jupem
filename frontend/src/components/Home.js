@@ -43,6 +43,24 @@ const Home = ({ analytics }) => {
       icon: '🎓'
     },
     {
+      id: 'imss-semanas',
+      title: '👴 Semanas IMSS - Para Adultos Mayores',
+      description: 'Consulta tus semanas cotizadas de forma súper fácil',
+      details: ['Diseñado para adultos mayores', 'Formulario ultra-simple', 'Ayuda personal WhatsApp'],
+      color: 'from-emerald-500 to-cyan-600',
+      path: '/imss-semanas',
+      icon: '👴'
+    },
+    {
+      id: 'email-recovery',
+      title: '🔐 Recuperar Contraseña Email',
+      description: 'Recupera tu email con información básica',
+      details: ['Para adultos mayores', 'Solo datos básicos necesarios', 'Guía paso a paso'],
+      color: 'from-violet-500 to-purple-600',
+      path: '/email-recovery',
+      icon: '🔐'
+    },
+    {
       id: 'fiscal',
       title: '📄 Constancia de Situación Fiscal',
       description: 'Obtén tu constancia fiscal por CURP',
