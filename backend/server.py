@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,9 +6,10 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime
+import re
 
 
 ROOT_DIR = Path(__file__).parent
@@ -20,13 +21,15 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(title="HUMANIDAD UNIDA API", description="Sistema integral de ayuda humanitaria")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
 
-# Define Models
+# ========== MODELS ==========
+
+# Original models
 class StatusCheck(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
@@ -35,10 +38,95 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# Add your routes to the router instead of directly to app
+# CFE Models
+class CFERequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    service_number: str
+    user_name: str
+    phone: str
+    donation_amount: float  # 10 or 20
+    is_first_time: bool
+    status: str = "pending"  # pending, verified, completed
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class CFERequestCreate(BaseModel):
+    service_number: str
+    user_name: str
+    phone: str
+    is_first_time: bool = True
+
+# Certificados Escolares Models
+class CertificateRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_name: str
+    phone: str
+    certificate_type: str  # SEP, INEA, CDMX, Puebla
+    donation_paid: bool = False
+    donation_amount: float = 80.0
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class CertificateRequestCreate(BaseModel):
+    user_name: str
+    phone: str
+    certificate_type: str
+
+# Constancia Fiscal Models
+class FiscalRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    curp: str
+    user_name: str
+    phone: str
+    status: str = "pending"
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class FiscalRequestCreate(BaseModel):
+    curp: str
+    user_name: str
+    phone: str
+
+# CFDI Models
+class CFDIVerification(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    xml_content: str
+    verification_result: dict
+    user_ip: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class CFDIVerificationCreate(BaseModel):
+    xml_content: str
+
+# Tramites Models
+class TramiteDownload(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    document_type: str  # CURP, NSS, Acta, AFORE, etc.
+    user_ip: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class TramiteDownloadCreate(BaseModel):
+    document_type: str
+
+# Contact Models
+class ContactMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: str
+    message: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class ContactMessageCreate(BaseModel):
+    name: str
+    email: str
+    phone: str
+    message: str
+
+
+# ========== ROUTES ==========
+
+# Original routes
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "HUMANIDAD UNIDA - Sistema de Ayuda Humanitaria"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
