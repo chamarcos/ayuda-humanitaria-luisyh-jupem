@@ -123,11 +123,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "API completa para solicitudes CFE con donaciones $10/$20 y validación WhatsApp"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All CFE endpoints working correctly. POST /api/cfe/request correctly applies $10 for first time users and $20 for subsequent users. GET /api/cfe/requests returns proper list. Service number validation working."
 
   - task: "Certificados Escolares API"
     implemented: true
