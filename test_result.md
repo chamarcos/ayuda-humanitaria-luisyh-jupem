@@ -153,11 +153,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "API con validación CURP y guía paso a paso SAT"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Fiscal endpoints working correctly. POST /api/fiscal/request properly validates CURP format (18 characters) and rejects invalid CURPs with 400 error. GET /api/fiscal/sat-guide returns complete step-by-step guide with official SAT links."
 
   - task: "CFDI Verificador API"
     implemented: true
