@@ -183,11 +183,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "API para trámites CURP, NSS, Acta, AFORE, semanas cotizadas"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Tramites endpoints working correctly. GET /api/tramites/documents returns all required document types (CURP, NSS, ACTA, AFORE, SEMANAS) with proper structure and official URLs. POST /api/tramites/download successfully registers downloads."
 
   - task: "Contacto y Analytics API"
     implemented: true
