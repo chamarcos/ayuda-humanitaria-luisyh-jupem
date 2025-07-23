@@ -116,6 +116,9 @@ backend:
       - working: true
         agent: "main"
         comment: "FastAPI configurado con CORS, MongoDB y estructura base completa"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Base API endpoint GET /api/ working correctly, returns proper welcome message 'HUMANIDAD UNIDA - Sistema de Ayuda Humanitaria'. CORS configuration functional."
 
   - task: "CFE Reimpresión API"
     implemented: true
