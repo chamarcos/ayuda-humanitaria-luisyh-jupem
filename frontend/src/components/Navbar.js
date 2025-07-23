@@ -12,6 +12,8 @@ const Navbar = ({ analytics }) => {
     { name: '📄 Constancia Fiscal', href: '/fiscal', icon: '📄' },
     { name: '🧾 CFDI', href: '/cfdi', icon: '🧾' },
     { name: '🧰 Trámites', href: '/tramites', icon: '🧰' },
+    { name: '👴 Semanas IMSS', href: '/imss-semanas', icon: '👴' },
+    { name: '🔐 Recuperar Email', href: '/email-recovery', icon: '🔐' },
     { name: '📞 Contacto', href: '/contact', icon: '📞' },
   ];
 
