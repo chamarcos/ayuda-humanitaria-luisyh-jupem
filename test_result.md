@@ -138,11 +138,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "API para certificados con enlaces oficiales SEP, INEA, CDMX, Puebla"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Certificate endpoints working perfectly. POST /api/certificates/request creates requests with $80 donation amount. GET /api/certificates/links returns all required official links (SEP, INEA, CDMX, Puebla)."
 
   - task: "Constancia Fiscal API"
     implemented: true
