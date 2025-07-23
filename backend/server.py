@@ -532,15 +532,20 @@ async def get_dashboard_analytics():
     total_certificates = await db.certificate_requests.count_documents({})
     total_fiscal = await db.fiscal_requests.count_documents({})
     total_contacts = await db.contact_messages.count_documents({})
+    total_imss_semanas = await db.imss_semanas_requests.count_documents({})
+    total_email_recovery = await db.email_recovery_requests.count_documents({})
     
     return {
         "total_requests": {
             "cfe": total_cfe,
             "certificates": total_certificates,
             "fiscal": total_fiscal,
-            "contacts": total_contacts
+            "contacts": total_contacts,
+            "imss_semanas": total_imss_semanas,
+            "email_recovery": total_email_recovery
         },
-        "total_helped": total_cfe + total_certificates + total_fiscal,
+        "total_helped": total_cfe + total_certificates + total_fiscal + total_imss_semanas + total_email_recovery,
+        "elderly_specific": total_imss_semanas + total_email_recovery,
         "last_updated": datetime.utcnow().isoformat()
     }
 
