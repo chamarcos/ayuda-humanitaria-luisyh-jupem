@@ -382,6 +382,148 @@ async def get_contact_info():
         "response_time": "24 horas máximo"
     }
 
+# ========== IMSS SEMANAS ROUTES (Ultra-Simple for Elderly) ==========
+@api_router.post("/imss/semanas/request", response_model=IMSSSemanasRequest)
+async def create_imss_semanas_request(request: IMSSSemanasRequestCreate):
+    # Validate NSS format (11 digits)
+    if not re.match(r'^\d{11}$', request.nss):
+        raise HTTPException(status_code=400, detail="NSS debe tener exactamente 11 números")
+    
+    # Validate CURP format
+    curp_pattern = r'^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9A-Z][0-9]$'
+    if not re.match(curp_pattern, request.curp.upper()):
+        raise HTTPException(status_code=400, detail="CURP inválida")
+    
+    # Validate birth date format DD/MM/YYYY
+    if not re.match(r'^\d{2}/\d{2}/\d{4}$', request.birth_date):
+        raise HTTPException(status_code=400, detail="Fecha debe ser DD/MM/YYYY")
+    
+    imss_dict = request.dict()
+    imss_dict['curp'] = imss_dict['curp'].upper()
+    imss_obj = IMSSSemanasRequest(**imss_dict)
+    
+    await db.imss_semanas_requests.insert_one(imss_obj.dict())
+    return imss_obj
+
+@api_router.get("/imss/semanas/guide")
+async def get_imss_semanas_guide():
+    return {
+        "title": "Consultar Semanas Cotizadas IMSS - Guía Súper Simple",
+        "what_you_need": [
+            "Tu Número de Seguridad Social (NSS) - 11 números",
+            "Tu CURP - 18 letras y números",
+            "Tu nombre completo como aparece en documentos",
+            "Tu fecha de nacimiento DD/MM/YYYY"
+        ],
+        "simple_steps": [
+            "1. Ingresa SOLO tu NSS (11 números sin espacios)",
+            "2. Escribe tu CURP completa (18 caracteres)",
+            "3. Pon tu nombre igual que en tu INE",
+            "4. Escribe tu fecha de nacimiento DD/MM/YYYY",
+            "5. Da clic en 'CONSULTAR MIS SEMANAS'",
+            "6. Te ayudaremos por WhatsApp si tienes dudas"
+        ],
+        "official_link": "http://www.imss.gob.mx/servicios/semanascotizadas",
+        "help_message": "📱 Si necesitas ayuda, mándanos mensaje por WhatsApp: +52 5659 952408",
+        "important_notes": [
+            "🔴 NUNCA pagues por esta consulta - es GRATIS en el IMSS",
+            "🔴 NO des datos a personas que te llamen por teléfono",
+            "✅ Solo usa el sitio oficial del IMSS: imss.gob.mx",
+            "✅ Te ayudamos gratis, no cobramos nada"
+        ]
+    }
+
+@api_router.get("/imss/semanas/requests", response_model=List[IMSSSemanasRequest])
+async def get_imss_semanas_requests():
+    requests = await db.imss_semanas_requests.find().to_list(1000)
+    return [IMSSSemanasRequest(**req) for req in requests]
+
+# ========== EMAIL RECOVERY ROUTES (Ultra-Simple for Elderly) ==========
+@api_router.post("/email/recovery/request", response_model=EmailRecoveryRequest)
+async def create_email_recovery_request(request: EmailRecoveryRequestCreate):
+    # Validate email format
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_pattern, request.email_to_recover):
+        raise HTTPException(status_code=400, detail="Formato de email inválido")
+    
+    # Validate CURP format
+    curp_pattern = r'^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9A-Z][0-9]$'
+    if not re.match(curp_pattern, request.curp.upper()):
+        raise HTTPException(status_code=400, detail="CURP inválida")
+    
+    # Validate birth date format DD/MM/YYYY
+    if not re.match(r'^\d{2}/\d{2}/\d{4}$', request.birth_date):
+        raise HTTPException(status_code=400, detail="Fecha debe ser DD/MM/YYYY")
+    
+    recovery_dict = request.dict()
+    recovery_dict['curp'] = recovery_dict['curp'].upper()
+    recovery_obj = EmailRecoveryRequest(**recovery_dict)
+    
+    await db.email_recovery_requests.insert_one(recovery_obj.dict())
+    return recovery_obj
+
+@api_router.get("/email/recovery/guide")
+async def get_email_recovery_guide():
+    return {
+        "title": "Recuperar Contraseña de Email - Para Adultos Mayores",
+        "what_you_need": [
+            "El email que quieres recuperar (ejemplo@gmail.com)",
+            "Tu nombre completo",
+            "Tu fecha de nacimiento DD/MM/YYYY",
+            "Tu CURP",
+            "Tu número de teléfono",
+            "Cualquier información extra que recuerdes"
+        ],
+        "email_providers": {
+            "Gmail": {
+                "name": "Gmail (Google)",
+                "how_to_identify": "Si tu email termina en @gmail.com",
+                "recovery_url": "https://accounts.google.com/signin/recovery",
+                "simple_steps": [
+                    "Ve a gmail.com",
+                    "Da clic en '¿Olvidaste tu contraseña?'",
+                    "Escribe tu email completo",
+                    "Sigue las instrucciones en pantalla"
+                ]
+            },
+            "Outlook": {
+                "name": "Outlook (Microsoft)",
+                "how_to_identify": "Si tu email termina en @outlook.com, @hotmail.com, @live.com",
+                "recovery_url": "https://account.live.com/password/reset",
+                "simple_steps": [
+                    "Ve a outlook.com",
+                    "Da clic en '¿Olvidaste tu contraseña?'",
+                    "Escribe tu email completo",
+                    "Sigue las instrucciones en pantalla"
+                ]
+            },
+            "Yahoo": {
+                "name": "Yahoo Mail",
+                "how_to_identify": "Si tu email termina en @yahoo.com, @yahoo.com.mx",
+                "recovery_url": "https://login.yahoo.com/forgot-password",
+                "simple_steps": [
+                    "Ve a yahoo.com",
+                    "Da clic en 'Iniciar sesión'",
+                    "Da clic en '¿Olvidaste tu contraseña?'",
+                    "Escribe tu email completo"
+                ]
+            }
+        },
+        "important_security": [
+            "🔴 NUNCA des tu contraseña nueva a extraños por teléfono",
+            "🔴 Las empresas oficiales NUNCA te piden contraseñas por teléfono",
+            "✅ Solo recupera desde los sitios oficiales",
+            "✅ Pide ayuda a familiares de confianza o contáctanos",
+            "📱 WhatsApp de ayuda: +52 5659 952408"
+        ],
+        "help_message": "Si tienes dudas o no puedes solo, llámanos por WhatsApp y te ayudamos paso a paso GRATIS"
+    }
+
+@api_router.get("/email/recovery/requests", response_model=List[EmailRecoveryRequest])
+async def get_email_recovery_requests():
+    requests = await db.email_recovery_requests.find().to_list(1000)
+    return [EmailRecoveryRequest(**req) for req in requests]
+
 # ========== ANALYTICS ROUTES ==========
 @api_router.get("/analytics/dashboard")
 async def get_dashboard_analytics():
