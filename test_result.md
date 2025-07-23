@@ -339,15 +339,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "CFE Reimpresión API"
-    - "Certificados Escolares API"
-    - "Constancia Fiscal API"
-    - "CFDI Verificador API"
     - "Landing Page Principal"
     - "Módulo CFE Frontend"
     - "Módulo Certificados Frontend"
+    - "Módulo Fiscal Frontend"
+    - "Módulo CFDI Frontend"
+    - "Módulo Trámites Frontend"
+    - "Módulo Contacto Frontend"
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
