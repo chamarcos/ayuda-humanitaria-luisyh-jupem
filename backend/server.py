@@ -120,6 +120,46 @@ class ContactMessageCreate(BaseModel):
     phone: str
     message: str
 
+# IMSS Semanas Models (Ultra-Simple for elderly)
+class IMSSSemanasRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nss: str  # Número de Seguridad Social
+    curp: str
+    user_name: str
+    birth_date: str  # Simple string format DD/MM/YYYY
+    phone: str
+    status: str = "pending"
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class IMSSSemanasRequestCreate(BaseModel):
+    nss: str
+    curp: str
+    user_name: str
+    birth_date: str
+    phone: str
+
+# Email Recovery Models (Ultra-Simple for elderly)
+class EmailRecoveryRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email_to_recover: str
+    user_name: str
+    birth_date: str
+    phone: str
+    curp: str
+    email_provider: str  # Gmail, Outlook, Yahoo, etc.
+    additional_info: str = ""  # Any additional info they remember
+    status: str = "pending"
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+class EmailRecoveryRequestCreate(BaseModel):
+    email_to_recover: str
+    user_name: str
+    birth_date: str
+    phone: str
+    curp: str
+    email_provider: str
+    additional_info: Optional[str] = ""
+
 
 # ========== ROUTES ==========
 
