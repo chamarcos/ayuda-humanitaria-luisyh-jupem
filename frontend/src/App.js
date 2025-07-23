@@ -1,51 +1,54 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 
+// Import components
+import Home from "./components/Home";
+import CFE from "./components/CFE";
+import Certificates from "./components/Certificates";
+import Fiscal from "./components/Fiscal";
+import CFDI from "./components/CFDI";
+import Tramites from "./components/Tramites";
+import Contact from "./components/Contact";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+function App() {
+  const [analytics, setAnalytics] = useState(null);
 
   useEffect(() => {
-    helloWorldApi();
+    const fetchAnalytics = async () => {
+      try {
+        const response = await axios.get(`${API}/analytics/dashboard`);
+        setAnalytics(response.data);
+      } catch (error) {
+        console.error("Error fetching analytics:", error);
+      }
+    };
+
+    fetchAnalytics();
   }, []);
 
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
-
-function App() {
-  return (
-    <div className="App">
+    <div className="App min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <Navbar analytics={analytics} />
+        <main className="min-h-screen">
+          <Routes>
+            <Route path="/" element={<Home analytics={analytics} />} />
+            <Route path="/cfe" element={<CFE />} />
+            <Route path="/certificates" element={<Certificates />} />
+            <Route path="/fiscal" element={<Fiscal />} />
+            <Route path="/cfdi" element={<CFDI />} />
+            <Route path="/tramites" element={<Tramites />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </main>
+        <Footer />
       </BrowserRouter>
     </div>
   );
